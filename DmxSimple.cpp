@@ -27,6 +27,7 @@ void dmxBegin();
 void dmxEnd();
 void dmxSendByte(volatile uint8_t);
 void dmxWrite(int,uint8_t);
+uint8_t dmxRead(int);
 void dmxMaxChannel(int);
 
 /* TIMER2 has a different register mapping on the ATmega8.
@@ -246,6 +247,15 @@ void dmxWrite(int channel, uint8_t value) {
   }
 }
 
+uint8_t dmxRead(int channel)
+{
+	  if (!dmxStarted) dmxBegin();
+	    if ((channel > 0) && (channel <= DMX_SIZE)) {
+		            return(dmxBuffer[channel-1]);
+			      }
+	      return(0);
+}
+
 void dmxMaxChannel(int channel) {
   if (channel <=0) {
     // End DMX transmission
@@ -285,5 +295,13 @@ void DmxSimpleClass::maxChannel(int channel) {
 void DmxSimpleClass::write(int address, uint8_t value)
 {
 	dmxWrite(address, value);
+}
+
+/** Read from DMX channel
+ *  * @param address DMX address in the range 1 - 512
+ *   */
+uint8_t DmxSimpleClass::read(int address)
+{
+	        return dmxRead(address);
 }
 DmxSimpleClass DmxSimple;
